@@ -1,0 +1,152 @@
+//question 1 remove duplicates from a string given:
+import java.util.*;
+
+public class RemoveDuplicatesUsingQueue {
+    public static void main(String[] args) {
+        List<String> listWithDuplicates = new ArrayList<>();
+        listWithDuplicates.add("apple");
+        listWithDuplicates.add("orange");
+        listWithDuplicates.add("banana");
+        listWithDuplicates.add("apple");
+        listWithDuplicates.add("grape");
+        listWithDuplicates.add("banana");
+
+        System.out.println("List with duplicates: " + listWithDuplicates);
+
+        List<String> listWithoutDuplicates = removeDuplicates(listWithDuplicates);
+
+        System.out.println("List without duplicates: " + listWithoutDuplicates);
+    }
+
+    private static <T> List<T> removeDuplicates(List<T> listWithDuplicates) {
+        Set<T> uniqueSet = new LinkedHashSet<>();
+        Queue<T> uniqueQueue = new LinkedList<>();
+
+        for (T element : listWithDuplicates) {
+            if (uniqueSet.add(element)) {
+                uniqueQueue.offer(element);
+            }
+        }
+
+        return new ArrayList<>(uniqueQueue);
+    }
+}
+//question 2
+//valid paranthesis:
+import java.util.Stack;
+import java.util.LinkedList;
+import java.util.Queue;
+
+public class ValidParentheses {
+
+    public static void main(String[] args) {
+        String validExpression = "{[()]}";
+        String invalidExpression = "{[(])}";
+
+        System.out.println(validExpression + " is valid: " + isValid(validExpression));
+        System.out.println(invalidExpression + " is valid: " + isValid(invalidExpression));
+    }
+
+    private static boolean isValid(String s) {
+        Stack<Character> stack = new Stack<>();
+        Queue<Character> queue = new LinkedList<>();
+
+        for (char c : s.toCharArray()) {
+            if (c == '(' || c == '{' || c == '[') {
+                stack.push(c);
+                queue.offer(c);
+            } else if (c == ')' || c == '}' || c == ']') {
+                if (stack.isEmpty() || !isMatchingPair(stack.pop(), c)) {
+                    return false;
+                }
+                queue.poll(); // Remove the corresponding opening parenthesis from the queue
+            }
+        }
+
+        // Check if both the stack and queue are empty, meaning all parentheses are matched
+        return stack.isEmpty() && queue.isEmpty();
+    }
+
+    private static boolean isMatchingPair(char opening, char closing) {
+        return (opening == '(' && closing == ')') ||
+               (opening == '{' && closing == '}') ||
+               (opening == '[' && closing == ']');
+    }
+}
+//question 3 :next greater element
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+public class NextGreaterElement {
+
+    public static void main(String[] args) {
+        int[] nums = {4, 5, 2, 10, 8};
+
+        int[] result = nextGreaterElement(nums);
+
+        System.out.println("Original Array: " + Arrays.toString(nums));
+        System.out.println("Next Greater Elements: " + Arrays.toString(result));
+    }
+
+    private static int[] nextGreaterElement(int[] nums) {
+        int n = nums.length;
+        int[] result = new int[n];
+        Arrays.fill(result, -1);
+
+        Stack<Integer> stack = new Stack<>();
+        Map<Integer, Integer> indexMap = new HashMap<>();
+
+        for (int i = 0; i < n; i++) {
+            // Pop elements from the stack while they are smaller than the current element
+            while (!stack.isEmpty() && nums[i] > nums[stack.peek()]) {
+                int poppedIndex = stack.pop();
+                result[poppedIndex] = nums[i];
+            }
+
+            // Push the current index onto the stack
+            stack.push(i);
+        }
+
+        return result;
+    }
+}
+//queses question 1 i was not able to solve
+//question 2 :
+import java.util.HashSet;
+import java.util.Set;
+
+public class ConsecutiveIntegersFinder {
+
+    private Set<Integer> numberSet;
+
+    public ConsecutiveIntegersFinder() {
+        numberSet = new HashSet<>();
+    }
+
+    public void addNumber(int num) {
+        numberSet.add(num);
+    }
+
+    public boolean hasConsecutiveIntegers(int k) {
+        for (int num : numberSet) {
+            if (numberSet.contains(num + k)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        ConsecutiveIntegersFinder finder = new ConsecutiveIntegersFinder();
+
+        finder.addNumber(1);
+        finder.addNumber(2);
+        finder.addNumber(3);
+
+        System.out.println("Has consecutive integers with difference 1: " + finder.hasConsecutiveIntegers(1)); // Output: true
+        System.out.println("Has consecutive integers with difference 2: " + finder.hasConsecutiveIntegers(2)); // Output: false
+        System.out.println("Has consecutive integers with difference 3: " + finder.hasConsecutiveIntegers(3)); // Output: false
+    }
+}
